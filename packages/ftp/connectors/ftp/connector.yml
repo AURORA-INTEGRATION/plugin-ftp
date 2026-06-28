@@ -1,0 +1,52 @@
+kind: connector
+id: common.connectors.ftp
+type: ftp
+name: FTP
+description: FTP / FTPS file transfer connection
+icon: FolderInput
+fields:
+  host:
+    type: string
+    required: true
+    description: FTP server hostname
+    placeholder: "ftp.example.com"
+  port:
+    type: integer
+    required: false
+    description: FTP port (default 21)
+    placeholder: "21"
+  username:
+    type: string
+    required: false
+    description: Username (omit for anonymous)
+    placeholder: "anonymous"
+  password:
+    type: string
+    required: false
+    secret: true
+    description: Password
+  secure:
+    type: boolean
+    required: false
+    default: false
+    description: Use FTPS (explicit TLS)
+  passive:
+    type: boolean
+    required: false
+    default: true
+    description: Passive mode (recommended behind NAT/firewall)
+
+# ── Studio metadata (ignored by the engine validator) ──
+client: connectors/ftp/client.py
+operations:
+  - common.connectors.ftp.upload
+  - common.connectors.ftp.download
+  - common.connectors.ftp.listFiles
+  - common.connectors.ftp.delete
+test:
+  description: Verifica la connessione FTP (login + NOOP).
+  client_fn: test_connection
+ui:
+  color: "#b45309"
+  group: Files
+  menu: FTP

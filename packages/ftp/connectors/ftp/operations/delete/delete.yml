@@ -1,0 +1,31 @@
+kind: python_service
+id: common.connectors.ftp.delete
+name: FTP — Delete
+script: connectors/ftp/operations/delete/delete.py
+input:
+  ftp_alias:
+    type: string
+    required: true
+    description: Nome dell'istanza connector di tipo ftp.
+  remote_path:
+    type: string
+    required: true
+    description: File remoto da eliminare.
+  ignore_missing:
+    type: boolean
+    required: false
+    description: Non fallire se il file non esiste.
+output:
+  success:
+    type: boolean
+  remote_path:
+    type: string
+  existed:
+    type: boolean
+
+ui:
+  mode: form
+  operation: delete
+  fields:
+    - { name: remote_path, label: File remoto, type: text, required: true }
+    - { name: ignore_missing, label: Ignora se assente, type: boolean }

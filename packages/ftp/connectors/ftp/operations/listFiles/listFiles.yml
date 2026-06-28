@@ -1,0 +1,24 @@
+kind: python_service
+id: common.connectors.ftp.listFiles
+name: FTP — List Files
+script: connectors/ftp/operations/listFiles/listFiles.py
+input:
+  ftp_alias:
+    type: string
+    required: true
+    description: Nome dell'istanza connector di tipo ftp.
+  remote_path:
+    type: string
+    required: false
+    description: Cartella remota (vuoto = directory corrente).
+output:
+  files:
+    type: array
+  count:
+    type: integer
+
+ui:
+  mode: form
+  operation: listFiles
+  fields:
+    - { name: remote_path, label: Cartella remota, type: text }

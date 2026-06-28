@@ -1,0 +1,29 @@
+kind: python_service
+id: common.connectors.ftp.download
+name: FTP — Download
+script: connectors/ftp/operations/download/download.py
+input:
+  ftp_alias:
+    type: string
+    required: true
+    description: Nome dell'istanza connector di tipo ftp.
+  remote_path:
+    type: string
+    required: true
+    description: File remoto da scaricare.
+  local_path:
+    type: string
+    required: true
+    description: Destinazione locale (sul motore).
+output:
+  success:
+    type: boolean
+  local_path:
+    type: string
+
+ui:
+  mode: form
+  operation: download
+  fields:
+    - { name: remote_path, label: File remoto, type: text, required: true }
+    - { name: local_path, label: Destinazione locale, type: text, required: true }

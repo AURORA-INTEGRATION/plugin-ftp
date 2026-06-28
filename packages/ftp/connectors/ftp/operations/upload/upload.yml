@@ -1,0 +1,29 @@
+kind: python_service
+id: common.connectors.ftp.upload
+name: FTP — Upload
+script: connectors/ftp/operations/upload/upload.py
+input:
+  ftp_alias:
+    type: string
+    required: true
+    description: Nome dell'istanza connector di tipo ftp.
+  local_path:
+    type: string
+    required: true
+    description: File locale (sul motore) da caricare.
+  remote_path:
+    type: string
+    required: true
+    description: Destinazione remota sul server FTP.
+output:
+  success:
+    type: boolean
+  remote_path:
+    type: string
+
+ui:
+  mode: form
+  operation: upload
+  fields:
+    - { name: local_path, label: File locale, type: text, required: true }
+    - { name: remote_path, label: Destinazione remota, type: text, required: true }
