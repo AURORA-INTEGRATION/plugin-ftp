@@ -1,3 +1,4 @@
 name: ftp
 version: 1.0.0
 description: FTP / FTPS connector for Aurora — upload / download / listFiles / delete.
+hidden: true   # connector-only package: services live under common.connectors.* — no empty tree node
