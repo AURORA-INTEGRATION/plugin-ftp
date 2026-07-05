@@ -14,6 +14,9 @@ input:
 output:
   files:
     type: array
+    items:
+      type: string
+    description: Nomi dei file nella cartella remota.
   count:
     type: integer
 

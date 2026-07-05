@@ -2,14 +2,54 @@
 
 Each call opens a short-lived connection (FTP control sockets don't pool well).
 Operation scripts (upload/download/listFiles/delete) import these helpers.
+
+Typed models: ``FtpConnectorConfig`` mirrors the connector-instance fields
+(connector.yml); each operation has its own result TypedDict — the exact shape
+the flow receives.
 """
 from __future__ import annotations
 
 import ftplib
-from typing import Any
+from typing import TypedDict
 
 
-def _connect(config: dict[str, Any]) -> ftplib.FTP:
+class FtpConnectorConfig(TypedDict, total=False):
+    """Fields of a connector instance of type ``ftp`` (see connector.yml)."""
+
+    host: str
+    port: int
+    username: str
+    password: str
+    secure: bool
+    passive: bool
+
+
+class UploadResult(TypedDict):
+    success: bool
+    remote_path: str
+
+
+class DownloadResult(TypedDict):
+    success: bool
+    local_path: str
+
+
+class ListFilesResult(TypedDict):
+    files: list[str]
+    count: int
+
+
+class DeleteResult(TypedDict):
+    success: bool
+    remote_path: str
+    existed: bool
+
+
+class TestConnectionResult(TypedDict):
+    ok: bool
+
+
+def _connect(config: FtpConnectorConfig) -> ftplib.FTP:
     host = config.get("host")
     if not host:
         raise ValueError("ftp connector: `host` is required")
@@ -32,7 +72,7 @@ def _connect(config: dict[str, Any]) -> ftplib.FTP:
     return ftp
 
 
-def test_connection(config: dict[str, Any]) -> dict[str, Any]:
+def test_connection(config: FtpConnectorConfig) -> TestConnectionResult:
     ftp = _connect(config)
     try:
         ftp.voidcmd("NOOP")
@@ -41,7 +81,7 @@ def test_connection(config: dict[str, Any]) -> dict[str, Any]:
         _quit(ftp)
 
 
-def upload(config: dict[str, Any], local_path: str, remote_path: str) -> dict[str, Any]:
+def upload(config: FtpConnectorConfig, local_path: str, remote_path: str) -> UploadResult:
     ftp = _connect(config)
     try:
         with open(local_path, "rb") as fh:
@@ -51,7 +91,7 @@ def upload(config: dict[str, Any], local_path: str, remote_path: str) -> dict[st
         _quit(ftp)
 
 
-def download(config: dict[str, Any], remote_path: str, local_path: str) -> dict[str, Any]:
+def download(config: FtpConnectorConfig, remote_path: str, local_path: str) -> DownloadResult:
     ftp = _connect(config)
     try:
         with open(local_path, "wb") as fh:
@@ -61,7 +101,7 @@ def download(config: dict[str, Any], remote_path: str, local_path: str) -> dict[
         _quit(ftp)
 
 
-def list_files(config: dict[str, Any], remote_path: str = "") -> dict[str, Any]:
+def list_files(config: FtpConnectorConfig, remote_path: str = "") -> ListFilesResult:
     ftp = _connect(config)
     try:
         names = ftp.nlst(remote_path) if remote_path else ftp.nlst()
@@ -70,7 +110,7 @@ def list_files(config: dict[str, Any], remote_path: str = "") -> dict[str, Any]:
         _quit(ftp)
 
 
-def delete(config: dict[str, Any], remote_path: str, ignore_missing: bool = False) -> dict[str, Any]:
+def delete(config: FtpConnectorConfig, remote_path: str, ignore_missing: bool = False) -> DeleteResult:
     ftp = _connect(config)
     try:
         try:
